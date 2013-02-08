@@ -7,6 +7,8 @@ http://stephengware.com/proj/javasocketbridge/
 This was written for a specific site, and is not quite optimized for general consumption yet.
 It connects a hardcoded server, and channel by default - although you can change that to suit your needs.
 
+It is completely web based. The GUI is in HTML/CSS.
+
 
 Features
 ==============
