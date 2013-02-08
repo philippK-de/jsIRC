@@ -1,0 +1,222 @@
+﻿<html xmlns = "http://www.w3.org/1999/xhtml">
+
+<head>
+	<title>I can has IRC connection ?</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<link href="chat.css" rel="stylesheet" type="text/css" />
+
+	<script type="text/javascript" src="java_socket_bridge.js"></script>
+	<script type="text/javascript" src="chat.js"></script>
+
+	<script type="text/javascript">
+	var userlist = new Array();
+	var smilies = new Array();
+	var dias = new Array();
+	thenick = "";
+	smilies = new Array("\\:\\)",":gott:",":hehe:",":\\(",":P",":umarm:",":wink:",":blumen:",":gruebel:",":hau:",":troest:",":baeh:",":heul:","\\;\\)",":haha:",":streit:",":vampir:",":motz:",":bussi:",":verbeug:",":moin:",":herz:",":knutsch:",":knicks:",":popp:",":engel:",":handkuss:",":tanz:",":zauber:",":liebe:");
+	smiliehtml = new Array("<img src = \"http://gothic-singles.de/asnforum/images/icon_smile.gif\" style = \"height:17px;width:17px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/gott.gif\" style = \"height:108px;width:170px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/haehae.gif\" style = \"height:17px;width:19px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/icon_frown.gif\" style = \"height:17px;width:17px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/icon_razz.gif\" style = \"height:17px;width:17px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/umarm2.gif\" style = \"height:17px;width:47px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/winki.gif\" style = \"height:19px;width:28px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/blumen.gif\" style = \"height:27px;width:28px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/gruebel.gif\" style = \"height:20px;width:23px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/hau.gif\" style = \"height:33px;width:43px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/troest.gif\" style = \"height:17px;width:47px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/baeh.gif\" style = \"height:19px;width:37px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/heul1.gif\" style = \"height:17px;width:23px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/icon_wink.gif\" style = \"height:17px;width:17px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/hahaha.gif\" style = \"height:18px;width:28px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/argue.gif\" style = \"height:20px;width:39px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/vampir.gif\" style = \"height:19px;width:33px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/motz.gif\" style = \"height:23px;width:30px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/bussi.gif\" style = \"height:18px;width:40px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/verbeug.gif\" style = \"height:17px;width:31px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/moin.gif\" style = \"height:21px;width:27px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/smile_herz.gif\" style = \"height:17px;width:21px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/knutsch.gif\" style = \"height:20px;width:47px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/knicks.gif\" style = \"height:23px;width:40px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/pop.gif\" style = \"height:21px;width:23px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/engel.gif\" style = \"height:20px;width:33px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/handkuss.gif\" style = \"height:23px;width:47px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/tanz.gif\" style = \"height:24px;width:95px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/zauberer.gif\" style = \"height:32px;width:25px\" />",
+							"<img src = \"http://gothic-singles.de/asnforum/images/malelovies.gif\" style = \"height:34px;width:25px\" />"
+						  );
+
+
+						  //Check if the java socket is ready, and only run the client if it is
+	function waituntilok() {
+	   if (document.getElementById("JavaSocketBridge").isActive()) {
+			run();
+	   }
+	   else{
+	   		document.getElementById('result').innerHTML += "[Verbinde mit Chatserver...]<br />";
+	   		window.setTimeout("waituntilok()",4000)
+	   }
+   }
+
+   //listen to the keyboard strokes. if enter is pressed call sendMsg()
+	function getKey(e) {
+		var code;
+		if (!e) var e = window.event;
+		if (e.keyCode) code = e.keyCode;
+		else if (e.which) code = e.which;
+		if(code == 13)
+		{
+			sendMsg();
+		}
+	}
+
+	//convert ascii to character
+	function chr(AsciiNum)
+	{
+		return String.fromCharCode(AsciiNum)
+	}
+
+	//run the client
+	function run(){
+		socket_connect('irc.fire-revolution.net', 6667);
+		thenick = document.getElementById('nick').value;
+		document.onkeydown = getKey;
+		socket_send("NICK " + thenick + " \n USER bla localhost localhost :ID:36 W test");
+
+	}
+
+	//stop the client
+	function stop(){
+			socket_send("QUIT JS CLIENT");
+			socket_disconnect();
+	}
+
+	/* Main routine. Parse Server Response / IRC protokoll and call the appropriate methods */
+	function on_socket_get(message){
+		var returnvalue = message;
+		splitmsg = message.split(":");
+		if(splitmsg[0] == "PING ")
+		{
+
+			socket_send("PONG "+splitmsg[1]);
+		}
+		checkval = returnvalue.substr(0,1);
+
+		if(checkval == ":")
+		{
+			befehle = message.split(" ");
+
+			if(befehle[1] == 376)
+			{
+				socket_send("JOIN #gsingle");
+			}
+			else if(befehle[1] == 352)
+			{
+				populateUserlist(message);
+			}
+			else if(befehle[1] == 315)
+			{
+				printUserlist();
+			}
+			else if(befehle[1] == 433)
+			{
+				var randval = Math.floor(Math.random()*11);
+				newnick = thenick + randval;
+				thenick = newnick;
+				document.getElementById('nick').value = thenick;
+				socket_send("NICK "+newnick + "\nUSER bla localhost localhost :bla@blubb.de\n");
+			}
+			//User has joined
+			else if(befehle[1] == "JOIN")
+			{
+				sendWho();
+				var joinuser = befehle[0].split("!");
+				joinuser = joinuser[0].substr(1);
+
+				document.getElementById("result").innerHTML += "<span class = 'userjoin'>[" + joinuser + " hat den Chat betreten]</span><br />";
+				var objDiv = document.getElementById("result");
+				objDiv.scrollTop = objDiv.scrollHeight;
+			}
+			//User has left
+			else if( befehle[1] == "PART" || befehle[1] == "QUIT")
+			{
+				sendWho();
+				var joinuser = befehle[0].split("!");
+				joinuser = joinuser[0].substr(1);
+
+				document.getElementById("result").innerHTML += "<span class = 'userleave'>[" + joinuser + " hat den Chat verlassen]</span><br />";
+				var objDiv = document.getElementById("result");
+				objDiv.scrollTop = objDiv.scrollHeight;
+			}
+			//User has changed nick
+			else if(befehle[1] == "NICK")
+			{
+				sendWho();
+			}
+			//User has said something
+			else if(befehle[1] == "PRIVMSG")
+			{
+
+				//privatdia
+				if(befehle[2] == thenick)
+				{
+					handleDia(message);
+				}
+				//offener chat
+				else
+				{
+					printChatText(message);
+				}
+			}
+
+		}
+
+	}
+
+	</script>
+<script type="text/javascript" src="gsclient_colorparser.js"></script>
+</head>
+
+
+<body onunload="stop();"  >
+<input type = "hidden" id = "nick" value = "TestuserGS_JS" />
+	<div id="result" class = "chatwin" ></div>
+	<div id = "userlist" class = "userlist"></div>
+	<input type = "text"  id = "usertext" size = "100" /><button onclick = "sendMsg();">Senden</button>
+	<button onclick = "sendAction();">Action</button><br />
+<br />
+	<div id = "smilies" style = "width:90%;float:left;">
+	<img src = "http://gothic-singles.de/asnforum/images/haehae.gif" onclick = "sendSmilie(':hehe:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/umarm2.gif" onclick = "sendSmilie(':umarm:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/winki.gif" onclick = "sendSmilie(':wink:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/blumen.gif" onclick = "sendSmilie(':blumen:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/gruebel.gif" onclick = "sendSmilie(':gruebel:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/hau.gif" onclick = "sendSmilie(':hau:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/troest.gif" onclick = "sendSmilie(':troest:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/baeh.gif" onclick = "sendSmilie(':baeh:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/heul1.gif" onclick = "sendSmilie(':heul:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/hahaha.gif" onclick = "sendSmilie(':haha:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/argue.gif" onclick = "sendSmilie(':streit:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/vampir.gif" onclick = "sendSmilie(':vampir:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/motz.gif" onclick = "sendSmilie(':motz:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/bussi.gif" onclick = "sendSmilie(':bussi:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/verbeug.gif" onclick = "sendSmilie(':verbeug:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/moin.gif" onclick = "sendSmilie(':moin:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/smile_herz.gif" onclick = "sendSmilie(':herz:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/knutsch.gif" onclick = "sendSmilie(':knutsch:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/knicks.gif" onclick = "sendSmilie(':knicks:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/engel.gif" onclick = "sendSmilie(':engel:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/handkuss.gif" onclick = "sendSmilie(':handkuss:');"/>
+	<img src = "http://gothic-singles.de/asnforum/images/tanz.gif" onclick = "sendSmilie(':tanz:');"/>
+
+	</div><br />
+
+<div>
+<applet id="JavaSocketBridge" archive="JavaSocketBridge.jar" code="JavaSocketBridge.class" width="0" height="0"></applet>
+</div>
+<div id = "log"></div>
+<script type = "text/javascript">
+waituntilok();
+</script>
+</body>
+</html>

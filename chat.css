@@ -1,0 +1,106 @@
+	body{
+	background-color:black;
+	color:white;
+	}
+	strong{
+		font-weight:bold;
+	}
+	input{
+	background-color:#CCCCCC;
+	border:1px solid;
+	}
+	/* User sendet /me action */
+	.useraction{
+		color:blue;
+	}
+	/*user betritt den chat */
+	.userjoin{
+		color:white;
+	}
+	/* User verlaesst den raum */
+	.userleave{
+		color:red;
+	}
+	/* Haupt Chat fenster */
+	.chatwin{
+		border:1px solid #CCCCCC;
+		background-color:#666666;
+		height:70%;width:78%;
+		overflow:auto;
+		float:left;
+	}
+	/* Userliste */
+	.userlist{
+		width:20%;
+		height:70%;
+		overflow:auto;
+	}
+	.
+	/* Textfarben */
+	.chatcolor0
+	{
+		color:#FFFFFF;
+	}
+	.chatcolor1
+	{
+		color:#FFFFFF;
+	}
+	.chatcolor2
+	{
+		color:#000099;
+	}
+	.chatcolor3
+	{
+		color:#009900;
+	}
+	.chatcolor4
+	{
+		color:#FF0000;
+	}
+	.chatcolor5
+	{
+		color:#993300;
+	}
+	.chatcolor6
+	{
+		color:#9900FF;
+	}
+	.chatcolor7
+	{
+		color:#FF9900;
+	}
+	.chatcolor8
+	{
+		color:#FFFF00;
+	}
+	.chatcolor9
+	{
+		color:#00FF00;
+	}
+	.chatcolor10
+	{
+		color:#009999;
+	}
+	.chatcolor11
+	{
+		color:#00FFFF;
+	}
+	.chatcolor12
+	{
+		color:#0000FF;
+	}
+	.chatcolor13
+	{
+		color:#FF00FF;
+	}
+	.chatcolor14
+	{
+		color:#999999;
+	}
+	.chatcolor15
+	{
+		color:#666666;
+	}
+
+a:link,a:visited { color:#666666; text-decoration:none;}
+a:hover,a:active { color:#717890; text-decoration:none; cursor:pointer;}
